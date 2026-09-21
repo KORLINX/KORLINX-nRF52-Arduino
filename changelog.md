@@ -1,3 +1,18 @@
+# KORLINX nRF52 Arduino Core Changelog
+
+## 1.0.0 - KORLINX NX40
+
+First KORLINX release, forked from the Adafruit nRF52 core.
+
+- Add **NX40 nRF52840** (`korlinx:nrf52:nx40`), variant `nx40_nrf52840`
+- Ship a bootloader built for the NX40, USB IDs `0x1209:0x4E58`
+- Carry only KORLINX boards
+- Link with `-lstdc++`, and add `Stream::getTimeout()`
+- Fix `tools.bootburn.bootloader.file`, which named a bootloader version that
+  did not match the shipped binaries
+
+---
+
 # Adafruit nRF52 Arduino Core Changelog
 
 ## 1.2.0

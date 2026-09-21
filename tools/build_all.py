@@ -36,7 +36,7 @@ def build_a_example(arg):
     variant = arg[0]
     sketch = arg[1]
 
-    fqbn = "adafruit:nrf52:{}:softdevice={},debug=l0".format(variant, get_sd(variant))
+    fqbn = "korlinx:nrf52:{}:softdevice={},debug=l0".format(variant, get_sd(variant))
 
     # succeeded, failed, skipped
     ret = [0, 0, 0]

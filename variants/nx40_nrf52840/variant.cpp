@@ -2,6 +2,7 @@
   Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
   Copyright (c) 2016 Sandeep Mistry All right reserved.
   Copyright (c) 2018, Adafruit Industries (adafruit.com)
+  Copyright (c) 2026 KORLINX
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,26 +20,39 @@
 */
 
 #include "variant.h"
-
 #include "wiring_constants.h"
 #include "wiring_digital.h"
 #include "nrf.h"
 
 const uint32_t g_ADigitalPinMap[] =
 {
-  // D0 .. D13
-  45,  // D0  is P1.13 (LED1)
-  43,  // D1  is P1.11 (LED2)
-  15,  // D2  is P0.15 (Button)
+  // P0
+  0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 ,
+  8 , 9 , 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23,
+  24, 25, 26, 27, 28, 29, 30, 31,
+
+  // P1
+  32, 33, 34, 35, 36, 37, 38, 39,
+  40, 41, 42, 43, 44, 45, 46, 47
 };
 
 void initVariant()
 {
-  // LED1 & LED2
+  // LEDs are active low
   pinMode(PIN_LED1, OUTPUT);
   ledOff(PIN_LED1);
 
   pinMode(PIN_LED2, OUTPUT);
   ledOff(PIN_LED2);
-}
 
+  pinMode(PIN_LED3, OUTPUT);
+  ledOff(PIN_LED3);
+
+  pinMode(PIN_LED4, OUTPUT);
+  ledOff(PIN_LED4);
+
+  // The LSM6DS3TR-C latches SPI mode if CS is low at boot
+  pinMode(PIN_6D_CS, OUTPUT);
+  digitalWrite(PIN_6D_CS, HIGH);
+}

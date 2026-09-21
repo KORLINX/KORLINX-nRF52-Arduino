@@ -14,14 +14,7 @@ jobs:
       matrix:
         arduino-platform:
         # Alphabetical order
-        - 'cluenrf52840'
-        - 'cplaynrf52840'
-        - 'feather52832'
-        - 'feather52840'
-        - 'feather52840sense'
-        - 'feather_nrf52840_sense_tft'
-        - 'itsybitsy52840'
-        - 'ledglasses_nrf52840'
+        - 'nx40'
     
     steps:
     - name: Checkout code
@@ -42,13 +35,13 @@ jobs:
         
     - name: Install BSP and Libraries
       env:
-        BSP_URL: https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
-        BSP_PATH: .arduino15/packages/adafruit/hardware/nrf52
+        BSP_URL: https://raw.githubusercontent.com/KORLINX/KORLINX-nRF52-Arduino/refs/heads/master/package_korlinx_index.json
+        BSP_PATH: .arduino15/packages/korlinx/hardware/nrf52
       run: |
         arduino-cli config init
         arduino-cli core update-index
         arduino-cli core update-index --additional-urls $BSP_URL
-        arduino-cli core install adafruit:nrf52 --additional-urls $BSP_URL
+        arduino-cli core install korlinx:nrf52 --additional-urls $BSP_URL
 
         # Repalce release BSP with our code
         BSP_VERSION=`eval ls $HOME/$BSP_PATH`
