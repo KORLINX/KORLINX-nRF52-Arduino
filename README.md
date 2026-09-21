@@ -93,15 +93,11 @@ match `USB_DESC_VID` and `USB_DESC_UF2_PID` in the bootloader's `board.h`.
 **`Tools → Burn Bootloader` fails** — the bundled `nrfjprog` tool package ships
 J-Link libraries but no `nrfjprog` binary. Use `nrfutil device program` instead.
 
-## License and notices
+## License
 
-Distributed under the same terms as the upstream Adafruit core. Prebuilt
-bootloader images in `bootloader/` link the Nordic SoftDevice — Copyright (c)
-2007–2018, Nordic Semiconductor ASA — which may be used only with a Nordic
-Semiconductor integrated circuit and must not be reverse engineered,
-decompiled, modified or disassembled.
-
-Neither Nordic Semiconductor nor Adafruit endorses this product.
+Same license as the upstream Adafruit core; see `LICENSE`. Bootloader images
+include the Nordic SoftDevice S140, covered by
+`bootloader/s140_nrf52_6.1.1_license-agreement.txt`.
 
 ## Credits
 

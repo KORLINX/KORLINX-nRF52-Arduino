@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 name=KXduino nRF52
-version=1.0.0
+version=1.0.1
 
 # Compile variables
 # -----------------
@@ -150,7 +150,7 @@ tools.nrfutil.upload.pattern.macosx=env LANG=C.UTF-8 LC_ALL=C.UTF-8 "{tools.nrfu
 # ---------------------------------------------------
 
 # Bootloader version
-tools.bootburn.bootloader.file={runtime.platform.path}/bootloader/{build.variant}/{build.variant}_bootloader-0.9.2_{build.sd_name}_{build.sd_version}
+tools.bootburn.bootloader.file={runtime.platform.path}/bootloader/{build.variant}/{build.variant}_bootloader-1.0.0_{build.sd_name}_{build.sd_version}
 
 tools.bootburn.bootloader.params.verbose=
 tools.bootburn.bootloader.params.quiet=

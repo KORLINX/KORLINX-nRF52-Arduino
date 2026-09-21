@@ -1,5 +1,10 @@
 # KORLINX nRF52 Arduino Core Changelog
 
+## 1.0.1
+
+- Bootloader images updated to KORLINX bootloader 1.0.0
+- Ship the Nordic SoftDevice license with the bootloader images
+
 ## 1.0.0 - KORLINX NX40
 
 First KORLINX release, forked from the Adafruit nRF52 core.

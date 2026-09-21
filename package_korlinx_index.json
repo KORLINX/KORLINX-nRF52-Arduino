@@ -481,6 +481,46 @@
               "version": "0.11.0-arduino2"
             }
           ]
+        },
+        {
+          "boards": [
+            {
+              "name": "NX40 nRF52840"
+            }
+          ],
+          "architecture": "nrf52",
+          "name": "KXBoards nRF52",
+          "category": "Contributed",
+          "version": "1.0.1",
+          "url": "https://github.com/KORLINX/KORLINX-nRF52-Arduino/releases/download/v1.0.1/KXduino_nRF52-1.0.1.tar.bz2",
+          "archiveFileName": "KXduino_nRF52-1.0.1.tar.bz2",
+          "checksum": "SHA-256:7b1c5ea23771cf40b17bb2f026335b7bf6ed17f55ac392d559617acae0a0d0be",
+          "size": "16778241",
+          "help": {
+            "online": "https://wiki.korlinx.com/docs/Network/Bluetooth/NX40_Dev_Kit/NX40_Dev_Kit_Overview"
+          },
+          "toolsDependencies": [
+            {
+              "packager": "korlinx",
+              "name": "arm-none-eabi-gcc",
+              "version": "9-2019q4"
+            },
+            {
+              "packager": "korlinx",
+              "name": "nrfjprog",
+              "version": "9.4.0"
+            },
+            {
+              "packager": "korlinx",
+              "name": "CMSIS",
+              "version": "5.7.0"
+            },
+            {
+              "packager": "arduino",
+              "name": "openocd",
+              "version": "0.11.0-arduino2"
+            }
+          ]
         }
       ]
     }
