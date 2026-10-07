@@ -3,9 +3,9 @@ name: Release
 # Push a tag vX.Y.Z on master to release. platform.txt, package.json and the
 # newest changelog.md entry must already say X.Y.Z.
 #
-# One archive is built and published for both installers: the Arduino Board
-# Manager (through package_korlinx_index.json) and PlatformIO (through the
-# KORLINX-PlatformIO platform, which pins the archive URL in its platform.json).
+# The same files are published twice: .tar.bz2 for the Arduino Board Manager
+# (through package_korlinx_index.json) and .tar.gz for PlatformIO (the
+# KORLINX-PlatformIO platform pins its URL in platform.json).
 
 on:
   push:
@@ -49,6 +49,7 @@ jobs:
             on && /^## / {exit}
             on {print}' changelog.md > notes.md
           gh release create "$GITHUB_REF_NAME" "dist/KXduino_nRF52-$VERSION.tar.bz2" \
+            "dist/KXduino_nRF52-$VERSION.tar.gz" \
             --title "$VERSION" --notes-file notes.md --verify-tag
 
       - name: Add the release to the Board Manager index
@@ -61,15 +62,3 @@ jobs:
           git commit -am "Add $VERSION to package_korlinx_index.json"
           git push origin master
 
-      - name: Ask KORLINX-PlatformIO to move to this core
-        # Needs a fine-grained token with Actions: write on
-        # KORLINX/KORLINX-PlatformIO, stored as KORLINX_PLATFORMIO_TOKEN.
-        # Without it, run that repo's "Bump core" workflow by hand.
-        env:
-          GH_TOKEN: ${{ secrets.KORLINX_PLATFORMIO_TOKEN }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::warning::KORLINX_PLATFORMIO_TOKEN is not set; run the Bump core workflow in KORLINX/KORLINX-PlatformIO with version $VERSION"
-            exit 0
-          fi
-          gh workflow run bump-core.yml -R KORLINX/KORLINX-PlatformIO -f version="$VERSION"
