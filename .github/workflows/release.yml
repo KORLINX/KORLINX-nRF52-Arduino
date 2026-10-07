@@ -1,0 +1,75 @@
+name: Release
+
+# Push a tag vX.Y.Z on master to release. platform.txt, package.json and the
+# newest changelog.md entry must already say X.Y.Z.
+#
+# One archive is built and published for both installers: the Arduino Board
+# Manager (through package_korlinx_index.json) and PlatformIO (through the
+# KORLINX-PlatformIO platform, which pins the archive URL in its platform.json).
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Check the tag against the version files
+        run: |
+          version=$(python3 tools/release/make_release.py check | awk '{print $2}')
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match version $version in platform.txt, package.json and changelog.md"
+            exit 1
+          fi
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/master || {
+            echo "::error::tag $GITHUB_REF_NAME is not on master"; exit 1; }
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Build the archive
+        run: python3 tools/release/make_release.py build --out dist
+
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Release notes are the changelog section for this version.
+          awk -v v="$VERSION" '
+            $0 ~ "^## " v "([^0-9.]|$)" {on=1; next}
+            on && /^## / {exit}
+            on {print}' changelog.md > notes.md
+          gh release create "$GITHUB_REF_NAME" "dist/KXduino_nRF52-$VERSION.tar.bz2" \
+            --title "$VERSION" --notes-file notes.md --verify-tag
+
+      - name: Add the release to the Board Manager index
+        run: |
+          git fetch origin master
+          git checkout -B master origin/master
+          python3 tools/release/make_release.py index "dist/KXduino_nRF52-$VERSION.tar.bz2"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Add $VERSION to package_korlinx_index.json"
+          git push origin master
+
+      - name: Ask KORLINX-PlatformIO to move to this core
+        # Needs a fine-grained token with Actions: write on
+        # KORLINX/KORLINX-PlatformIO, stored as KORLINX_PLATFORMIO_TOKEN.
+        # Without it, run that repo's "Bump core" workflow by hand.
+        env:
+          GH_TOKEN: ${{ secrets.KORLINX_PLATFORMIO_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::KORLINX_PLATFORMIO_TOKEN is not set; run the Bump core workflow in KORLINX/KORLINX-PlatformIO with version $VERSION"
+            exit 0
+          fi
+          gh workflow run bump-core.yml -R KORLINX/KORLINX-PlatformIO -f version="$VERSION"

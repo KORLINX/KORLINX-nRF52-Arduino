@@ -1,5 +1,13 @@
 # KORLINX nRF52 Arduino Core Changelog
 
+## 1.0.2
+
+- PlatformIO support: the release archive now carries a `package.json`, so the
+  same archive serves the Arduino Board Manager and the `KORLINX-PlatformIO`
+  PlatformIO platform
+- Release archives are built by `tools/release/make_release.py` from tracked
+  files only, which drops the macOS `._*` metadata the 1.0.x archives carried
+
 ## 1.0.1
 
 - Bootloader images updated to KORLINX bootloader 1.0.0

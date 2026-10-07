@@ -25,3 +25,6 @@
 /boards.local.txt
 /platform.local.txt
 
+
+# Release archives from tools/release/make_release.py
+/dist/
