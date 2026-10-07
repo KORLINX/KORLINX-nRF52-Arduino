@@ -3,9 +3,9 @@ name: Release
 # Push a tag vX.Y.Z on master to release. platform.txt, package.json and the
 # newest changelog.md entry must already say X.Y.Z.
 #
-# One archive is built and published for both installers: the Arduino Board
-# Manager (through package_korlinx_index.json) and PlatformIO (through the
-# KORLINX-PlatformIO platform, which pins the archive URL in its platform.json).
+# The same files are published twice: .tar.bz2 for the Arduino Board Manager
+# (through package_korlinx_index.json) and .tar.gz for PlatformIO (the
+# KORLINX-PlatformIO platform pins its URL in platform.json).
 
 on:
   push:
@@ -48,14 +48,15 @@ jobs:
             $0 ~ "^## " v "([^0-9.]|$)" {on=1; next}
             on && /^## / {exit}
             on {print}' changelog.md > notes.md
-          gh release create "$GITHUB_REF_NAME" "dist/KXduino_nRF52-$VERSION.tar.gz" \
+          gh release create "$GITHUB_REF_NAME" "dist/KXduino_nRF52-$VERSION.tar.bz2" \
+            "dist/KXduino_nRF52-$VERSION.tar.gz" \
             --title "$VERSION" --notes-file notes.md --verify-tag
 
       - name: Add the release to the Board Manager index
         run: |
           git fetch origin master
           git checkout -B master origin/master
-          python3 tools/release/make_release.py index "dist/KXduino_nRF52-$VERSION.tar.gz"
+          python3 tools/release/make_release.py index "dist/KXduino_nRF52-$VERSION.tar.bz2"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "Add $VERSION to package_korlinx_index.json"

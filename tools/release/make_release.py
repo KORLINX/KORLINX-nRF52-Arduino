@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Build the KORLINX nRF52 core release archive and register it in the index.
 
-One archive serves both installers:
+The same files are packed twice, from one tar stream:
 
-- the Arduino Board Manager, through package_korlinx_index.json
-- PlatformIO, through package.json at the archive root, which the
-  KORLINX-PlatformIO platform pins by URL
+- .tar.bz2 for the Arduino Board Manager, through package_korlinx_index.json
+- .tar.gz for PlatformIO, through package.json at the archive root, which the
+  KORLINX-PlatformIO platform pins by URL. PlatformIO takes a github.com URL
+  ending in .tar.bz2 for a git repository, so it cannot use the first one.
 
 Usage:
     make_release.py check
@@ -14,12 +15,13 @@ Usage:
 
 `check` verifies that platform.txt, package.json and changelog.md agree on the
 version. `build` packs the tracked files of the checkout, submodules included,
-into dist/KXduino_nRF52-<version>.tar.gz and prints its checksum and size.
-`index` adds that archive to package_korlinx_index.json as a new platform
+into dist/KXduino_nRF52-<version>.tar.bz2 and .tar.gz and prints their
+checksums and sizes. `index` adds the .tar.bz2 to package_korlinx_index.json as a new platform
 release, copying the tool dependencies of the newest existing release.
 """
 
 import argparse
+import bz2
 import gzip
 import hashlib
 import io
@@ -93,7 +95,6 @@ def build(out_dir):
     version = checked_version()
     if git("status", "--porcelain", "--untracked-files=no").strip():
         print("warning: the checkout has uncommitted changes; they are packed as they are on disk")
-    name = "%s-%s.tar.gz" % (ARCHIVE_PREFIX, version)
     top = "%s-%s" % (ARCHIVE_PREFIX, version)
     # Pin every timestamp to the commit time so that rebuilding the same
     # commit gives the same bytes, and therefore the same index checksum.
@@ -125,16 +126,22 @@ def build(out_dir):
                 tar.addfile(info, fp)
 
     os.makedirs(out_dir, exist_ok=True)
-    path = os.path.join(out_dir, name)
-    with open(path, "wb") as fp:
-        fp.write(gzip.compress(buf.getvalue(), 9, mtime=0))
-
-    print("archive  %s" % path)
     print("version  %s" % version)
-    print("checksum SHA-256:%s" % sha256(path))
-    print("size     %d" % os.path.getsize(path))
-    print("url      %s" % RELEASE_URL.format(version=version, name=name))
-    return path
+    paths = []
+    for ext, compress in (
+        ("tar.bz2", lambda data: bz2.compress(data, 9)),
+        ("tar.gz", lambda data: gzip.compress(data, 9, mtime=0)),
+    ):
+        name = "%s-%s.%s" % (ARCHIVE_PREFIX, version, ext)
+        path = os.path.join(out_dir, name)
+        with open(path, "wb") as fp:
+            fp.write(compress(buf.getvalue()))
+        print("archive  %s" % path)
+        print("checksum SHA-256:%s" % sha256(path))
+        print("size     %d" % os.path.getsize(path))
+        print("url      %s" % RELEASE_URL.format(version=version, name=name))
+        paths.append(path)
+    return paths
 
 
 def sha256(path):
@@ -147,9 +154,9 @@ def sha256(path):
 
 def add_to_index(archive):
     name = os.path.basename(archive)
-    m = re.fullmatch(re.escape(ARCHIVE_PREFIX) + r"-(\d+\.\d+\.\d+)\.tar\.gz", name)
+    m = re.fullmatch(re.escape(ARCHIVE_PREFIX) + r"-(\d+\.\d+\.\d+)\.tar\.bz2", name)
     if not m:
-        fail("%s is not named %s-<version>.tar.gz" % (name, ARCHIVE_PREFIX))
+        fail("%s is not named %s-<version>.tar.bz2" % (name, ARCHIVE_PREFIX))
     version = m.group(1)
 
     with open(INDEX) as fp:
