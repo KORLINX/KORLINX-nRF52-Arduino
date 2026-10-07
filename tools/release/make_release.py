@@ -14,13 +14,13 @@ Usage:
 
 `check` verifies that platform.txt, package.json and changelog.md agree on the
 version. `build` packs the tracked files of the checkout, submodules included,
-into dist/KXduino_nRF52-<version>.tar.bz2 and prints its checksum and size.
+into dist/KXduino_nRF52-<version>.tar.gz and prints its checksum and size.
 `index` adds that archive to package_korlinx_index.json as a new platform
 release, copying the tool dependencies of the newest existing release.
 """
 
 import argparse
-import bz2
+import gzip
 import hashlib
 import io
 import json
@@ -93,7 +93,7 @@ def build(out_dir):
     version = checked_version()
     if git("status", "--porcelain", "--untracked-files=no").strip():
         print("warning: the checkout has uncommitted changes; they are packed as they are on disk")
-    name = "%s-%s.tar.bz2" % (ARCHIVE_PREFIX, version)
+    name = "%s-%s.tar.gz" % (ARCHIVE_PREFIX, version)
     top = "%s-%s" % (ARCHIVE_PREFIX, version)
     # Pin every timestamp to the commit time so that rebuilding the same
     # commit gives the same bytes, and therefore the same index checksum.
@@ -127,7 +127,7 @@ def build(out_dir):
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, name)
     with open(path, "wb") as fp:
-        fp.write(bz2.compress(buf.getvalue(), 9))
+        fp.write(gzip.compress(buf.getvalue(), 9, mtime=0))
 
     print("archive  %s" % path)
     print("version  %s" % version)
@@ -147,9 +147,9 @@ def sha256(path):
 
 def add_to_index(archive):
     name = os.path.basename(archive)
-    m = re.fullmatch(re.escape(ARCHIVE_PREFIX) + r"-(\d+\.\d+\.\d+)\.tar\.bz2", name)
+    m = re.fullmatch(re.escape(ARCHIVE_PREFIX) + r"-(\d+\.\d+\.\d+)\.tar\.gz", name)
     if not m:
-        fail("%s is not named %s-<version>.tar.bz2" % (name, ARCHIVE_PREFIX))
+        fail("%s is not named %s-<version>.tar.gz" % (name, ARCHIVE_PREFIX))
     version = m.group(1)
 
     with open(INDEX) as fp:
