@@ -39,6 +39,10 @@ const uint32_t g_ADigitalPinMap[] =
 
 void initVariant()
 {
+  // The NX40 runs its regulators in LDO mode; keep DC/DC off
+  NRF_POWER->DCDCEN = 0;
+  NRF_POWER->DCDCEN0 = 0;
+
   // LEDs are active low
   pinMode(PIN_LED1, OUTPUT);
   ledOff(PIN_LED1);
