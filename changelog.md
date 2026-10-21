@@ -1,5 +1,10 @@
 # KORLINX nRF52 Arduino Core Changelog
 
+## Unreleased
+
+- Add the `KORLINX NX40` examples library, one sketch for each feature of the
+  NX40 Dev Kit, the same set as the KORLINX-PlatformIO examples
+
 ## 1.0.2
 
 - PlatformIO support: the release archive now carries a `package.json`, so the

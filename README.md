@@ -63,6 +63,18 @@ and macOS binaries ship in `tools/adafruit-nrfutil/`. On Linux:
 pip3 install --user adafruit-nrfutil
 ```
 
+## Examples
+
+With the NX40 selected, **File → Examples → KORLINX NX40** has one sketch for
+each feature of the board: `blink`, `fade`, `leds`, `button`, `analog`,
+`serial_echo`, `usb_serial`, `shtc3`, `imu` and `ble_uart`. They are the same
+set as the [KORLINX-PlatformIO](https://github.com/KORLINX/KORLINX-PlatformIO)
+examples.
+
+Every sketch includes `Adafruit_TinyUSB.h`, directly or through `bluefruit.h`.
+Without it the USB stack is not linked, the board shows no serial port, and the
+IDE cannot reset it to upload the next sketch.
+
 ## Install the bootloader
 
 A blank board, or one running another RTOS, has no UF2 bootloader. Install it
