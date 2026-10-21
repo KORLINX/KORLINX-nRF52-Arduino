@@ -1,6 +1,6 @@
 {
   "name": "framework-arduino-korlinx-nrf52",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "KORLINX nRF52 Arduino core for PlatformIO, the same core the Arduino IDE installs as korlinx:nrf52",
   "keywords": ["framework", "arduino", "nrf52", "korlinx"],
   "homepage": "https://github.com/KORLINX/KORLINX-nRF52-Arduino",

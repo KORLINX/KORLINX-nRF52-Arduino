@@ -1,9 +1,10 @@
 # KORLINX nRF52 Arduino Core Changelog
 
-## Unreleased
+## 1.0.3
 
 - Add the `KORLINX NX40` examples library, one sketch for each feature of the
   NX40 Dev Kit, the same set as the KORLINX-PlatformIO examples
+- NX40: keep the regulators in LDO mode, with DC/DC off
 
 ## 1.0.2
 
